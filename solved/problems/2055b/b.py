@@ -75,36 +75,28 @@ def in_string_list():
     s = in_string()
     return (list(s[:len(s) - 1]))
 
-from collections import Counter, defaultdict
-
-def comp(l):
-    c = Counter(l)
-    unt = set(k for k, v in c.items() if v > 1)
-
-    if len(unt) == len(l):
-        return 0
-
-    i = 0
-    best = -1
-    res = 0
-    for j, n in enumerate(l):
-        if n in unt:
-            i = j + 1
-            continue
-        if j - i >= best:
-            best = j - i
-            res = [i, j]
-    return res
-
 
 def solve():
-    _ = in_int()
-    l = in_int_list()
-    v = comp(l)
-    if v == 0:
-        print(0)
+    n = in_int()
+    a = in_int_list()
+    b = in_int_list()
+
+    need = 0
+    min_gap = 10**9
+
+    for x, y in zip(a, b):
+        if x < y:
+            if need != 0:
+                print('NO')
+                return
+            need = y - x
+        else:
+            min_gap = min(min_gap, x - y)
+
+    if min_gap < need:
+        print('NO')
     else:
-        print(f"{v[0] + 1} {v[1] + 1}")
+        print('YES')
 
 
 def solve_n():

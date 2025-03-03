@@ -77,7 +77,22 @@ def in_string_list():
 
 
 def solve():
-    pass
+    res = 0
+    n, m = in_ints()
+    vals = []
+    for _ in range(n):
+        cur_sum = 0
+        l = in_int_list()
+        for i, a in enumerate(l):
+            res += (m-i) * a
+            cur_sum += a
+        vals.append(cur_sum)
+    vals = sorted(vals)[::-1]
+
+    for i in range(n):
+        res += vals[i] * m * (n-i-1)
+
+    print(res)
 
 
 def solve_n():

@@ -77,7 +77,22 @@ def in_string_list():
 
 
 def solve():
-    pass
+    _ = in_ints()
+    l = in_int_list()
+    b = in_int()
+
+    opt = [l[0], b - l[0]]
+    for a in l[1:]:
+        new_opt = []
+        if any(o <= a for o in opt):
+            new_opt.append(a)
+        if any(o <= b-a for o in opt):
+            new_opt.append(b-a)
+        if len(new_opt) == 0:
+            print('NO')
+            return
+        opt = new_opt
+    print('YES')
 
 
 def solve_n():

@@ -77,37 +77,7 @@ def in_string_list():
 
 
 def solve():
-    from collections import Counter
 
-
-    in_int()
-    a = in_int_list()
-
-    if len(a) % 2 == 1:
-        print("No")
-        return
-
-    s = list(sorted(set(a)))
-    c = Counter(a)
-
-    cur = 0
-    prev_n = 0
-    for n in s:
-        count = c[n]
-        if n - prev_n > cur // 2:
-            if cur % 2 == 1:
-                print("No")
-                return
-            cur = count
-        else:
-            cur = count + cur - ((n - prev_n) * 2)
-        prev_n = n
-
-    if cur % 2 == 1:
-        print("No")
-        return
-
-    print("Yes")
 
 
 def solve_n():

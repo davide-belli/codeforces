@@ -3,7 +3,6 @@ import sys
 import os
 from io import BytesIO, IOBase
 
-
 BUFSIZE = 8192
 
 
@@ -74,29 +73,23 @@ def in_string():
 
 def in_string_list():
     s = in_string()
-    return (list(s[:len(s) - 1]))
+    return (list(s[:len(s)]))
 
-def solve_half(a, b):
-    n = min(len(a), len(b))
-
-    res = 0
-    i = 0
-    while i < n and a[i] >= b[i]:
-        # print(b[i])
-        res += b[i]
-        i += 1
-    # print(a[i:])
-    res += sum(a[i:])
-    return res
 
 def solve():
-    n, l, r = in_ints()
-    a = in_int_list()
-    x = sorted(a[0:l-1])
-    y = sorted(a[r:])
-    a = sorted(a[l-1:r])[::-1]
+    from collections import Counter
+    _ = in_int()
+    s = in_string_list()
+    s = Counter(s)
+    if '-' not in s.keys() or '_' not in s.keys():
+        print(0)
+        return
 
-    print(min(solve_half(a, x), solve_half(a, y)))
+    b = s['_']
+    a = s['-']
+    c = a // 2
+    a = a - c
+    print(a*b*c)
 
 
 def solve_n():
@@ -113,6 +106,6 @@ if __name__ == "__main__":
     # solve()
     solve_n()
 
-    from utils.utils import check_results
-    sys.stdout = sys.__stdout__
-    print(check_results())
+    # from utils.utils import check_results
+    # sys.stdout = sys.__stdout__
+    # print(check_results())

@@ -73,7 +73,7 @@ def in_string():
 
 def in_string_as_list():
     s = in_string()
-    return (list(s[:len(s) - 1]))
+    return (list(s[:len(s)]))
 
 
 def solve():

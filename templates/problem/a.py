@@ -73,7 +73,7 @@ def in_string():
 
 def in_string_list():
     s = in_string()
-    return (list(s[:len(s) - 1]))
+    return (list(s[:len(s)]))
 
 
 def solve():
@@ -94,6 +94,6 @@ if __name__ == "__main__":
     # solve()
     solve_n()
 
-    # from utils.utils import check_results
-    # sys.stdout = sys.__stdout__
-    # print(check_results())
+    from utils.utils import check_results
+    sys.stdout = sys.__stdout__
+    print(check_results())

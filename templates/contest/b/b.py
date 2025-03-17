@@ -63,7 +63,7 @@ def in_ints():
     return (map(int, input().split()))
 
 
-def in_list():
+def in_int_list():
     return (list(map(int, input().split())))
 
 
@@ -71,7 +71,7 @@ def in_string():
     return input()
 
 
-def in_string_as_list():
+def in_string_list():
     s = in_string()
     return (list(s[:len(s)]))
 
@@ -91,9 +91,9 @@ if __name__ == "__main__":
         sys.stdin = open("input.txt", "r")
         sys.stdout = open("output.txt", "w")
 
-    solve()
-    # solve_n()
+    # solve()
+    solve_n()
 
-    # from utils.utils import check_results
-    # sys.stdout = sys.__stdout__
-    # print(check_results())
+    from utils.utils import check_results
+    sys.stdout = sys.__stdout__
+    print(check_results())

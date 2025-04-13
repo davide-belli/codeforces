@@ -93,6 +93,19 @@ def find_divisors(number):
                 divisors.append(number // i)
     return divisors
 
+def to_int(x):
+    return int(x, 2)
+
+def to_bit(x, pad=False, pad_to=30):
+    x = bin(x)[2:]
+
+    if pad:
+        # pad '1010' to '00000...0001010'
+        pad_len = pad_to - len(x)
+        padding = '0' * pad_len
+        x = padding + x
+
+    return x
 
 def in_int():
     return (int(input()))

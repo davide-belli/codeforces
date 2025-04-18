@@ -3,10 +3,15 @@ import sys
 import os
 from io import BytesIO, IOBase
 
-from math import gcd, floor, sqrt, log, ceil
+import random
+from math import gcd, lcm, floor, ceil, sqrt, isqrt, log, exp, factorial, perm
 from collections import defaultdict, Counter, deque
 from bisect import bisect_left, bisect_right, insort_left, insort_right
 
+
+############################################################
+# Utils for fast I/O.
+############################################################
 BUFSIZE = 8192
 
 
@@ -59,7 +64,102 @@ sys.stdin, sys.stdout = IOWrapper(sys.stdin), IOWrapper(sys.stdout)
 input = lambda: sys.stdin.readline().rstrip("\r\n")
 
 
+############################################################
+# String manipulation
+############################################################
+def lc_subseq(s1, s2):
+    """
+    Find the longest common subsequence between s1 and s2.
+    Elements of the subsequence don't need to be contiguous in the original strings! Complexity is O(n1 * n2).
+    """
+    n1, n2 = len(s1) + 1, len(s2) + 1
+    maximum = 0
+    # f(i, j) = length of longest string starting at position i for s1 and j for s2. we are looking for f(0, 0)
+    # if s1[i-1] == s2[j-1]:
+    #     f(i-1, j-1) = f(i, j) + 1
+    # else:
+    #     f(i-1, j-1) = max { f(i, j-1) , f(i-1, j) }
+    f = [[0] * n2 for _ in range(n1)]
+    for i in range(n1 - 1, 0, -1):
+        for j in range(n2 - 1, 0, -1):
+            if s1[i - 1] == s2[j - 1]:
+                f[i - 1][j - 1] = f[i][j] + 1
+            else:
+                f[i - 1][j - 1] = max( f[i][j - 1], f[i - 1][j] )
+            if f[i - 1][j - 1] > maximum:
+                maximum = f[i - 1][j - 1]
+    substring = ''
+    if maximum > 0:
+        j = 0
+        for i in range(n1):
+            if f[i][j] == maximum and (i == n1 - 1 or f[i + 1][j] != maximum):
+                substring += s1[i]
+                j += 1
+                maximum -= 1
+                if maximum == 0:
+                    break
+    return substring
+
+def lc_substr(s1, s2):
+    """
+    Find the longest common substring between s1 and s2.
+    Elements of the subsequence have to be contiguous in the original strings! Complexity is O(n1 * n2).
+    """
+    n1, n2 = len(s1) + 1, len(s2) + 1
+    index, maximum = None, 0
+    # f(i, j) = longest string ending at position i for s1 and j for s2
+    # we are looking for max{f(i, j)} with 0 <= i < n1 and 0 <= j < n2
+    # f(i+1, j+1) = f(i, j) + 1 if s1[i+1] == s2[j+1] else 0
+    f = [[0] * n2 for _ in range(n1)]
+    for i in range(1, n1):
+        for j in range(1, n2):
+            if s1[i - 1] == s2[j - 1]:
+                f[i][j] = f[i - 1][j - 1] + 1
+                if f[i][j] > maximum:
+                    maximum = f[i][j]
+                    index = i - 1
+            else:
+                f[i][j] = 0
+    if index != None:
+        substring = s1[index - maximum + 1: index + 1]
+    else:
+        substring = ''
+    return substring
+
+
+############################################################
+# Array manipulation
+############################################################
+def max_sum_subarray(l):
+    """ Finds the maximal sum for a contiguous subarray using Kadane 1D algorithm. Complexity is O(n). """
+    max_so_far = l[0]
+    curr_max = l[0]
+    for i in range(1, len(l)):
+        curr_max = max(l[i], curr_max + l[i])
+        max_so_far = max(max_so_far, curr_max)
+    return max_so_far
+
+
+############################################################
+# Primes and divisors.
+############################################################
+def is_prime(n):
+    """ Check if a number is prime with the trial division method. Complexity is O(sqrt(n)). """
+    if n <= 1:
+        return False
+    elif n <= 3:
+        return True
+    elif n % 2 == 0 or n % 3 == 0:
+        return False
+    i = 5
+    while i * i <= n:
+        if n % i == 0 or n % (i + 2) == 0:
+            return False
+        i = i + 6
+    return True
+
 def prime_factors(n):
+    """ Find all prime factors of n. Complexity is O(sqrt(n)). """
     i = 2
     primfac = []
     while i * i <= n:
@@ -72,6 +172,7 @@ def prime_factors(n):
     return primfac
 
 def prime_sieve(n):
+    """ Find list of primes until n. Complexity is O(n). """
     is_prime = [True for _ in range(n + 1)]
     is_prime[0] = is_prime[1] = False
     i = 2
@@ -85,6 +186,7 @@ def prime_sieve(n):
     return is_prime
 
 def find_divisors(number):
+    """ Find all divisors of n. Complexity is O(sqrt(n)). """
     divisors = []
     for i in range(1, int(number**0.5) + 1):
         if number % i == 0:
@@ -93,30 +195,47 @@ def find_divisors(number):
                 divisors.append(number // i)
     return divisors
 
+
+############################################################
+# Integer-Bit manipulation
+############################################################
 def to_int(x):
+    """ Converts bit string to its int representation. """
     return int(x, 2)
 
 def to_bit(x, pad=False, pad_to=30):
+    """ Converts int to its bit string representation. Optionally left-pad to a given string length. """
     x = bin(x)[2:]
-
     if pad:
         # pad '1010' to '00000...0001010'
         pad_len = pad_to - len(x)
         padding = '0' * pad_len
         x = padding + x
-
     return x
 
+
+############################################################
+# Query template for interactive problems
+############################################################
+def query(q):
+    print(q, flush=True)
+    ans = in_string()  # TODO update this accordingly!
+    return ans
+
+
+############################################################
+# Input parsing
+############################################################
 def in_int():
-    return (int(input()))
+    return int(input())
 
 
 def in_ints():
-    return (map(int, input().split()))
+    return map(int, input().split())
 
 
 def in_int_list():
-    return (list(map(int, input().split())))
+    return list(map(int, input().split()))
 
 
 def in_string():
@@ -125,14 +244,18 @@ def in_string():
 
 def in_string_list():
     s = in_string()
-    return (list(s[:len(s)]))
+    return list(s[:len(s)])
 
 
+############################################################
+# Write your solution here!
+############################################################
 def solve():
     pass
 
 
 def solve_n():
+    """ Wrapper for problems with multiple test cases. """
     testcases = int(input())  # multiple testcases
     for _ in range(testcases):
         solve()
@@ -146,6 +269,7 @@ if __name__ == "__main__":
     # solve()
     solve_n()
 
+    # For local testing. Comment out before submission!
     from utils.utils import check_results
     sys.stdout = sys.__stdout__
     print(check_results())
